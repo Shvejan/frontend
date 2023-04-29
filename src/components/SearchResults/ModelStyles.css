@@ -5,9 +5,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 10px;
-  overflow: hidden;
   padding: 10px;
-  width: 1000px;
+  width: 1300px;
   height: 800px;
 }
 .header-div {
@@ -114,10 +113,23 @@
   box-shadow: none;
 }
 .results-div {
-  background-color: white;
-  height: 400px;
+  max-height: 470px;
+  overflow: auto;
+}
+.results-div::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
+.results-div::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 100px;
+}
+
+.results-div::-webkit-scrollbar-thumb {
+  background-color: #63508b;
+  border-radius: 100px;
+}
 .run-btn {
   width: 60px;
   margin-left: 10px;
