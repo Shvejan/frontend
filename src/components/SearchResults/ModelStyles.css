@@ -7,6 +7,8 @@
   border-radius: 10px;
   overflow: hidden;
   padding: 10px;
+  width: 1000px;
+  height: 800px;
 }
 .header-div {
   margin-bottom: 20px;
@@ -93,8 +95,7 @@
 }
 
 .query-div {
-  width: 500px;
-  /* background-color: red; */
+  width: 100%;
 }
 .query-div textarea {
   width: 100%;
@@ -114,5 +115,22 @@
 }
 .results-div {
   background-color: white;
-  min-height: 300px;
+  height: 400px;
+}
+
+.run-btn {
+  width: 60px;
+  margin-left: 10px;
+  padding: 10px;
+  background-color: #63508b;
+  color: white;
+  cursor: pointer;
+  justify-content: center;
+  display: flex;
+}
+.loading-div {
+  display: flex;
+  justify-content: center;
+  height: 400px;
+  align-items: center;
 }

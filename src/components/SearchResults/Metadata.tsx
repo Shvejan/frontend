@@ -152,11 +152,11 @@ class IdCopyButton extends React.PureComponent<
   }
 }
 
-class SqlParaquet extends React.PureComponent<{}> {
+class SqlParaquet extends React.PureComponent<{id: string}> {
   render() {
     return (
       <Tooltip title="Run SQL Queries on Dataset" placement="top" arrow>
-        <SqlModel />
+        <SqlModel id={this.props.id} />
       </Tooltip>
     );
   }
@@ -173,7 +173,7 @@ export function DownloadButtons(props: {hit: SearchResult; session?: Session}) {
   }
   return (
     <ButtonGroup>
-      <SqlParaquet />
+      <SqlParaquet id={hit.id} />
       <IdCopyButton id={hit.id} />
       <LinkButton
         href={`${API_URL}/download/${hit.id}`}
