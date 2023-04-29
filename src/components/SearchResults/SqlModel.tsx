@@ -9,25 +9,38 @@ import {Loading} from '../visus/Loading/Loading';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-const baseurl = 'http://127.0.0.1:8000/download?id=';
+const baseurl = 'http://127.0.0.1:8000/query?id=';
+
+interface QueryStructure {
+  data: Array<string>;
+  error: boolean;
+  message: string;
+}
 
 const SqlModel: React.FC<{id: string}> = ({id}) => {
   const [show, setshow] = useState<boolean>(false);
-  const [query_results, setQueryResults] = useState<Array<string>>([]);
+  const [query_results, setQueryResults] = useState<QueryStructure>({
+    data: [],
+    error: false,
+    message: '',
+  });
   const [loading, setloading] = useState(false);
   const text = 'Run SQL';
 
-  const fetchData = () => {
+  const fetchData = (query: string) => {
     setloading(true);
     axios
-      .get(baseurl + id)
-      .then(res => setQueryResults(res.data))
+      .get(baseurl + id + '&query=' + query)
+      .then(res => {
+        setQueryResults({
+          data: JSON.parse(res.data.data),
+          error: res.data.error,
+          message: res.data.message,
+        });
+      })
       .then(() => setloading(false));
-    toggleModel();
   };
 
   const toggleModel = () => {
@@ -36,7 +49,13 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
 
   return (
     <>
-      <button className="btn btn-sm btn-outline-primary" onClick={fetchData}>
+      <button
+        className="btn btn-sm btn-outline-primary"
+        onClick={() => {
+          fetchData('');
+          toggleModel();
+        }}
+      >
         <Icon.Edit className="feather" /> {text}
       </button>
       <PopupModel
@@ -44,6 +63,7 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
         toggleModel={toggleModel}
         loading={loading}
         query_results={query_results}
+        fetchData={fetchData}
       />
     </>
   );
@@ -51,8 +71,9 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
 interface ModelProps {
   show: boolean;
   loading: boolean;
-  query_results: Array<string>;
+  query_results: QueryStructure;
   toggleModel: () => void;
+  fetchData: (query: string) => void;
 }
 
 const PopupModel: React.FC<ModelProps> = ({
@@ -60,8 +81,9 @@ const PopupModel: React.FC<ModelProps> = ({
   loading,
   query_results,
   toggleModel,
+  fetchData,
 }) => {
-  const [sqlQuery, setsqlQuery] = useState<string>('');
+  const [sqlQuery, setsqlQuery] = useState<string>('select * from TABLE;');
 
   return (
     <Modal open={show} onClose={toggleModel}>
@@ -82,16 +104,13 @@ const PopupModel: React.FC<ModelProps> = ({
                 <Icon.Copy className="feather" />
               </div>
 
-              <div className="icon">
+              <div className="icon" onClick={() => console.log(query_results)}>
                 <Icon.RefreshCw className="feather" />
               </div>
               <div className="icon">
                 <Icon.XOctagon className="feather" />
               </div>
-              <div
-                className="run-btn"
-                onClick={() => console.log(typeof query_results)}
-              >
+              <div className="run-btn" onClick={() => fetchData(sqlQuery)}>
                 Run
               </div>
             </div>
@@ -105,14 +124,16 @@ const PopupModel: React.FC<ModelProps> = ({
             onChange={e => setsqlQuery(e.target.value)}
             rows={5}
           />
-          {!loading && <span>Total {query_results.length} Rows Fetched</span>}
+          {!loading && query_results.data && (
+            <span>Total {query_results.data.length} Rows Fetched</span>
+          )}
         </div>
-        {!loading && query_results.length && (
+        {!loading && !query_results.error && query_results.data.length && (
           <div className="results-div">
             <Table style={{width: '100%'}}>
               <TableHead style={{width: '100%', position: 'sticky', top: '0'}}>
                 <TableRow style={{backgroundColor: '#63508b'}}>
-                  {Object.keys(query_results[0]).map((col, id) => (
+                  {Object.keys(query_results.data[0]).map((col, id) => (
                     <TableCell key={id} style={{color: 'white'}}>
                       {col}
                     </TableCell>
@@ -120,7 +141,7 @@ const PopupModel: React.FC<ModelProps> = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {query_results.map((row, id) => (
+                {query_results.data.map((row, id) => (
                   <TableRow key={id}>
                     {Object.values(row).map((val, id) => (
                       <TableCell key={id}>{val}</TableCell>
@@ -131,6 +152,7 @@ const PopupModel: React.FC<ModelProps> = ({
             </Table>
           </div>
         )}
+        {query_results.error && <div>{query_results.message}</div>}
         {loading && (
           <div className="loading-div">
             <Loading message="Loading..." />
