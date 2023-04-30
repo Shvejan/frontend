@@ -1,5 +1,5 @@
 import * as Icon from 'react-feather';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import './ModelStyles.css';
@@ -85,6 +85,36 @@ const PopupModel: React.FC<ModelProps> = ({
 }) => {
   const [sqlQuery, setsqlQuery] = useState<string>('select * from TABLE;');
 
+  const TableComponent = useMemo(() => {
+    if (query_results && query_results.data) {
+      return (
+        <div className="results-div">
+          <Table style={{width: '100%'}}>
+            <TableHead style={{width: '100%', position: 'sticky', top: '0'}}>
+              <TableRow style={{backgroundColor: '#63508b'}}>
+                {Object.keys(query_results.data[0]).map((col, id) => (
+                  <TableCell key={id} style={{color: 'white'}}>
+                    {col}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {query_results.data.map((row, id) => (
+                <TableRow key={id}>
+                  {Object.values(row).map((val, id) => (
+                    <TableCell key={id}>{val}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      );
+    }
+    return <div></div>;
+  }, [query_results]);
+
   return (
     <Modal open={show} onClose={toggleModel}>
       <div className="modal-div ">
@@ -104,10 +134,13 @@ const PopupModel: React.FC<ModelProps> = ({
                 <Icon.Copy className="feather" />
               </div>
 
-              <div className="icon" onClick={() => console.log(query_results)}>
+              <div
+                className="icon"
+                onClick={() => setsqlQuery('select * from TABLE;')}
+              >
                 <Icon.RefreshCw className="feather" />
               </div>
-              <div className="icon">
+              <div className="icon" onClick={() => setsqlQuery('')}>
                 <Icon.XOctagon className="feather" />
               </div>
               <div className="run-btn" onClick={() => fetchData(sqlQuery)}>
@@ -128,30 +161,10 @@ const PopupModel: React.FC<ModelProps> = ({
             <span>Total {query_results.data.length} Rows Fetched</span>
           )}
         </div>
-        {!loading && !query_results.error && query_results.data.length && (
-          <div className="results-div">
-            <Table style={{width: '100%'}}>
-              <TableHead style={{width: '100%', position: 'sticky', top: '0'}}>
-                <TableRow style={{backgroundColor: '#63508b'}}>
-                  {Object.keys(query_results.data[0]).map((col, id) => (
-                    <TableCell key={id} style={{color: 'white'}}>
-                      {col}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {query_results.data.map((row, id) => (
-                  <TableRow key={id}>
-                    {Object.values(row).map((val, id) => (
-                      <TableCell key={id}>{val}</TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        {!loading &&
+          !query_results.error &&
+          query_results.data.length &&
+          TableComponent}
         {query_results.error && <div>{query_results.message}</div>}
         {loading && (
           <div className="loading-div">
