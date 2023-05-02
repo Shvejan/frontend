@@ -1,5 +1,5 @@
 import * as Icon from 'react-feather';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import './ModelStyles.css';
@@ -42,6 +42,11 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
       })
       .then(() => setloading(false));
   };
+
+  useEffect(() => {
+    console.log('query results updated to');
+    console.log(query_results);
+  }, [query_results]);
 
   const toggleModel = () => {
     setshow(prev => !prev);
@@ -86,7 +91,7 @@ const PopupModel: React.FC<ModelProps> = ({
   const [sqlQuery, setsqlQuery] = useState<string>('select * from TABLE;');
 
   const TableComponent = useMemo(() => {
-    if (query_results && query_results.data) {
+    if (query_results && query_results.data.length) {
       return (
         <div className="results-div">
           <Table style={{width: '100%'}}>
