@@ -17,6 +17,7 @@ interface QueryStructure {
   data: Array<string>;
   error: boolean;
   message: string;
+  dtypes: Array<string>;
 }
 
 const SqlModel: React.FC<{id: string}> = ({id}) => {
@@ -25,6 +26,7 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
     data: [],
     error: false,
     message: '',
+    dtypes: [],
   });
   const [loading, setloading] = useState(false);
   const text = 'Run SQL';
@@ -38,6 +40,7 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
           data: JSON.parse(res.data.data),
           error: res.data.error,
           message: res.data.message,
+          dtypes: res.data.dtypes,
         });
       })
       .then(() => setloading(false));
@@ -100,6 +103,11 @@ const PopupModel: React.FC<ModelProps> = ({
                 {Object.keys(query_results.data[0]).map((col, id) => (
                   <TableCell key={id} style={{color: 'white'}}>
                     {col}
+                    <div>
+                      <span className="badge badge-pill semtype semtype-enumeration">
+                        {query_results.dtypes[id]}
+                      </span>
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>
