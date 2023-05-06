@@ -117,6 +117,70 @@ const HelpModel: React.FC<HelpModelProps> = ({showHelp, toggleHelp}) => {
             <Icon.X className="feather" onClick={toggleHelp} />
           </div>
         </div>
+
+        <div className="help-body">
+          <div>
+            <span>
+              The backend uses DuckDB to query the datasets. Use the keyword{' '}
+              <span className="code-embeding">{'"DATASET"'}</span> to refer the
+              table so that, in the Backend, the keyword{' '}
+              <span className="code-embeding">{'"DATASET"'}</span> is replaced
+              by the specific dataset ID
+            </span>
+
+            <div className="section">
+              <span>Some example queries</span>
+              <small className="embeded-sql"> SELECT * FROM DATASET</small>
+              <small className="embeded-sql">
+                DESCRIBE SELECT * FROM DATASET
+              </small>
+              <small className="embeded-sql">
+                {' '}
+                SELECT {'{column-name}'}, count(*) FROM DATASET GROUP BY
+                {'{column-name}'}
+              </small>
+
+              <small className="embeded-sql">
+                {' '}
+                ALTER TABLE DATASET ALTER {'{column-name}'} TYPE {'{data-type}'}
+                ;
+              </small>
+            </div>
+            <div className="section">
+              <span>Common Data types in DuckDB</span>
+              <ul>
+                <li>BIGINT</li>
+                <li>TIMESTAMP</li>
+                <li>VARCHAR</li>
+                <li>FLOAT</li>
+                <li>DOUBLE</li>
+                <li>
+                  <a
+                    href="https://duckdb.org/docs/sql/data_types/overview.html"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    More...
+                  </a>{' '}
+                </li>
+              </ul>
+            </div>
+            <div className="section">
+              <span>Features</span>
+              <ul>
+                <li>
+                  Users can write custom SQL Queries to transform dataset or
+                  select only the required data that you want
+                </li>
+                <li>
+                  Users can change the data types of columns based on their
+                  requirements
+                </li>
+                <li>Users can download the result of their SQL queries</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </Modal>
   );
