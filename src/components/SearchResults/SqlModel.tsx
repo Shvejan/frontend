@@ -11,7 +11,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-const baseurl = 'http://127.0.0.1:8000/query?id=';
+const baseurl = 'http://127.0.0.1:8000';
 
 interface QueryStructure {
   data: Array<string>;
@@ -34,7 +34,22 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
   const fetchData = (query: string) => {
     setloading(true);
     axios
-      .get(baseurl + id + '&query=' + query)
+      .get(baseurl + '/query?id=' + id + '&query=' + query)
+      .then(res => {
+        setQueryResults({
+          data: JSON.parse(res.data.data),
+          error: res.data.error,
+          message: res.data.message,
+          dtypes: res.data.dtypes,
+        });
+      })
+      .then(() => setloading(false));
+  };
+
+  const resetDataset = () => {
+    setloading(true);
+    axios
+      .get(baseurl + '/reset?id=' + id)
       .then(res => {
         setQueryResults({
           data: JSON.parse(res.data.data),
@@ -72,6 +87,7 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
         loading={loading}
         query_results={query_results}
         fetchData={fetchData}
+        resetDataset={resetDataset}
       />
     </>
   );
@@ -82,6 +98,7 @@ interface ModelProps {
   query_results: QueryStructure;
   toggleModel: () => void;
   fetchData: (query: string) => void;
+  resetDataset: () => void;
 }
 
 const PopupModel: React.FC<ModelProps> = ({
@@ -90,11 +107,17 @@ const PopupModel: React.FC<ModelProps> = ({
   query_results,
   toggleModel,
   fetchData,
+  resetDataset,
 }) => {
-  const [sqlQuery, setsqlQuery] = useState<string>('select * from TABLE;');
+  const [sqlQuery, setsqlQuery] = useState<string>('select * from DATASET;');
   useEffect(() => {
-    setsqlQuery('select * from TABLE;');
+    setsqlQuery('select * from DATASET;');
   }, [show]);
+
+  const reset_dataset = () => {
+    resetDataset();
+    setsqlQuery('select * from DATASET;');
+  };
 
   const TableComponent = useMemo(() => {
     if (query_results && query_results.data.length) {
@@ -152,10 +175,7 @@ const PopupModel: React.FC<ModelProps> = ({
                 <Icon.Copy className="feather" />
               </div>
 
-              <div
-                className="icon"
-                onClick={() => setsqlQuery('select * from TABLE;')}
-              >
+              <div className="icon" onClick={reset_dataset}>
                 <Icon.RefreshCw className="feather" />
               </div>
               <div className="icon" onClick={() => setsqlQuery('')}>
