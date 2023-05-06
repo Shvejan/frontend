@@ -11,6 +11,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import {ButtonGroup, Tooltip} from '@material-ui/core';
 const baseurl = 'http://127.0.0.1:8000';
 
 interface QueryStructure {
@@ -171,7 +172,63 @@ const PopupModel: React.FC<ModelProps> = ({
           <span>Editor</span>
           <div className="tool-btns">
             <div className="right-btns">
-              <div className="icon">
+              <Tooltip title="How to use" placement="top" arrow>
+                <button className="btn btn-sm btn-outline-primary">
+                  <div className="icon-holder">
+                    <Icon.HelpCircle className="feather" /> Help
+                  </div>
+                </button>
+              </Tooltip>
+              <Tooltip
+                title="Reset the table"
+                placement="top"
+                arrow
+                onClick={reset_dataset}
+              >
+                <button className="btn btn-sm btn-outline-primary">
+                  <div className="icon-holder">
+                    <Icon.RefreshCw className="feather" /> Reset
+                  </div>
+                </button>
+              </Tooltip>
+              <Tooltip
+                title="Clear the query"
+                placement="top"
+                arrow
+                onClick={() => setsqlQuery('')}
+              >
+                <button className="btn btn-sm btn-outline-primary">
+                  <div className="icon-holder">
+                    <Icon.XOctagon className="feather" /> Clear
+                  </div>
+                </button>
+              </Tooltip>
+              <Tooltip
+                title="Change column data types"
+                placement="top"
+                arrow
+                onClick={() =>
+                  setsqlQuery(
+                    'ALTER TABLE DATASET ALTER {column name} TYPE {data type};'
+                  )
+                }
+              >
+                <button className="btn btn-sm btn-outline-primary">
+                  <div className="icon-holder">
+                    <Icon.Edit className="feather" /> Edit
+                  </div>
+                </button>
+              </Tooltip>
+              <Tooltip title="Run query" placement="top" arrow>
+                <div
+                  className="run-query-btn"
+                  onClick={() => fetchData(sqlQuery)}
+                >
+                  Run
+                </div>
+              </Tooltip>
+
+              {/* <div className="icon">
                 <Icon.Copy className="feather" />
               </div>
 
@@ -183,7 +240,7 @@ const PopupModel: React.FC<ModelProps> = ({
               </div>
               <div className="run-btn" onClick={() => fetchData(sqlQuery)}>
                 Run
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
