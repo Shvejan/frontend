@@ -30,7 +30,6 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
     dtypes: [],
   });
   const [loading, setloading] = useState(false);
-  const text = 'Run SQL';
 
   const fetchData = (query: string) => {
     setloading(true);
@@ -80,7 +79,7 @@ const SqlModel: React.FC<{id: string}> = ({id}) => {
           toggleModel();
         }}
       >
-        <Icon.Edit className="feather" /> {text}
+        <Icon.Edit className="feather" /> Run SQL
       </button>
       <PopupModel
         show={show}
@@ -101,6 +100,27 @@ interface ModelProps {
   fetchData: (query: string) => void;
   resetDataset: () => void;
 }
+interface HelpModelProps {
+  showHelp: boolean;
+  toggleHelp: () => void;
+}
+
+const HelpModel: React.FC<HelpModelProps> = ({showHelp, toggleHelp}) => {
+  return (
+    <Modal open={showHelp} onClose={toggleHelp}>
+      <div className="help-div">
+        <div style={{display: 'flex'}}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Help Section
+          </Typography>
+          <div className="close-btn" style={{marginLeft: 'auto'}}>
+            <Icon.X className="feather" onClick={toggleHelp} />
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const PopupModel: React.FC<ModelProps> = ({
   show,
@@ -111,6 +131,12 @@ const PopupModel: React.FC<ModelProps> = ({
   resetDataset,
 }) => {
   const [sqlQuery, setsqlQuery] = useState<string>('select * from DATASET;');
+  const [showHelp, setshowHelp] = useState<boolean>(false);
+
+  const toggleHelp = () => {
+    setshowHelp(prev => !prev);
+  };
+
   useEffect(() => {
     setsqlQuery('select * from DATASET;');
   }, [show]);
@@ -160,22 +186,39 @@ const PopupModel: React.FC<ModelProps> = ({
   return (
     <Modal open={show} onClose={toggleModel}>
       <div className="modal-div ">
-        <div className="close-btn">
-          <Icon.X className="feather" onClick={toggleModel} />
-        </div>
-        <div className="header-div">
+        <div style={{display: 'flex', marginBottom: '10px'}}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Run SQL Queries on the dataset
+            Run SQL Queries on dataset
           </Typography>
+          <div className="close-btn" style={{marginLeft: 'auto'}}>
+            <Icon.X className="feather" onClick={toggleModel} />
+          </div>
         </div>
         <div className="toolbar">
           <span>Editor</span>
           <div className="tool-btns">
             <div className="right-btns">
-              <Tooltip title="How to use" placement="top" arrow>
+              <Tooltip
+                title="How to use"
+                placement="top"
+                arrow
+                onClick={toggleHelp}
+              >
                 <button className="btn btn-sm btn-outline-primary">
                   <div className="icon-holder">
                     <Icon.HelpCircle className="feather" /> Help
+                  </div>
+                </button>
+              </Tooltip>
+
+              <Tooltip
+                title="Download the queried dataset"
+                placement="top"
+                arrow
+              >
+                <button className="btn btn-sm btn-outline-primary">
+                  <div className="icon-holder">
+                    <Icon.Download className="feather" /> Download
                   </div>
                 </button>
               </Tooltip>
@@ -227,20 +270,6 @@ const PopupModel: React.FC<ModelProps> = ({
                   Run
                 </div>
               </Tooltip>
-
-              {/* <div className="icon">
-                <Icon.Copy className="feather" />
-              </div>
-
-              <div className="icon" onClick={reset_dataset}>
-                <Icon.RefreshCw className="feather" />
-              </div>
-              <div className="icon" onClick={() => setsqlQuery('')}>
-                <Icon.XOctagon className="feather" />
-              </div>
-              <div className="run-btn" onClick={() => fetchData(sqlQuery)}>
-                Run
-              </div> */}
             </div>
           </div>
         </div>
@@ -266,6 +295,7 @@ const PopupModel: React.FC<ModelProps> = ({
             <Loading message="Loading..." />
           </div>
         )}
+        <HelpModel showHelp={showHelp} toggleHelp={toggleHelp} />
       </div>
     </Modal>
   );
