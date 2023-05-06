@@ -181,7 +181,7 @@ const PopupModel: React.FC<ModelProps> = ({
           !query_results.error &&
           query_results.data.length &&
           TableComponent}
-        {query_results.error && <div>{query_results.message}</div>}
+        {query_results.error && !loading && <div>{query_results.message}</div>}
         {loading && (
           <div className="loading-div">
             <Loading message="Loading..." />
