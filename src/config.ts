@@ -33,7 +33,7 @@ function loadVariableFromHTML(name: string): string {
  */
 
 let baseUrl = `//${window.location.host}`;
-let apiUrl = baseUrl;
+let apiUrl = 'https://auctus.vida-nyu.org/api/v1';
 
 const isDev = process.env.NODE_ENV === 'development';
 if (isDev && process.env.REACT_APP_BASE_URL) {
