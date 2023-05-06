@@ -117,9 +117,11 @@ const PopupModel: React.FC<ModelProps> = ({
             </TableHead>
             <TableBody>
               {query_results.data.map((row, id) => (
-                <TableRow key={id}>
+                <TableRow key={id} className="table-row">
                   {Object.values(row).map((val, id) => (
-                    <TableCell key={id}>{val}</TableCell>
+                    <TableCell key={id}>
+                      {typeof val === 'string' ? val.substring(0, 150) : val}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))}

@@ -146,3 +146,7 @@
   height: 400px;
   align-items: center;
 }
+.table-row {
+  max-height: 50px !important;
+  overflow: hidden;
+}
