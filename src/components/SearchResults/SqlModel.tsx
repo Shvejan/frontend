@@ -92,6 +92,9 @@ const PopupModel: React.FC<ModelProps> = ({
   fetchData,
 }) => {
   const [sqlQuery, setsqlQuery] = useState<string>('select * from TABLE;');
+  useEffect(() => {
+    setsqlQuery('select * from TABLE;');
+  }, [show]);
 
   const TableComponent = useMemo(() => {
     if (query_results && query_results.data.length) {
