@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import './ModelStyles.css';
 import axios from 'axios';
 import {Loading} from '../visus/Loading/Loading';
-
+import Papa from 'papaparse';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -125,7 +125,11 @@ const HelpModel: React.FC<HelpModelProps> = ({showHelp, toggleHelp}) => {
               <span className="code-embeding">{'"DATASET"'}</span> to refer the
               table so that, in the Backend, the keyword{' '}
               <span className="code-embeding">{'"DATASET"'}</span> is replaced
-              by the specific dataset ID
+              by the specific dataset ID.
+              <br />
+              Always use double quotes{' '}
+              <span className="code-embeding">{'"Column Name"'}</span> while
+              refering columns with spaces in their names
             </span>
 
             <div className="section">
@@ -246,7 +250,17 @@ const PopupModel: React.FC<ModelProps> = ({
     }
     return <div></div>;
   }, [query_results]);
-
+  function downloadCsvData() {
+    const csvData = Papa.unparse(query_results.data);
+    const dataStr =
+      'data:text/csv;charset=utf-8,' + encodeURIComponent(csvData);
+    const link = document.createElement('a');
+    link.setAttribute('href', dataStr);
+    link.setAttribute('download', 'Modified.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
   return (
     <Modal open={show} onClose={toggleModel}>
       <div className="modal-div ">
@@ -279,6 +293,7 @@ const PopupModel: React.FC<ModelProps> = ({
                 title="Download the queried dataset"
                 placement="top"
                 arrow
+                onClick={downloadCsvData}
               >
                 <button className="btn btn-sm btn-outline-primary">
                   <div className="icon-holder">
